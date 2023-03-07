@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     "Books",
     "Copies",
     "Users",
+    "Geres",
     "rest_framework",
 ]
 
