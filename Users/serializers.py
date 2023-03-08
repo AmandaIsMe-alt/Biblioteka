@@ -5,9 +5,10 @@ from .models import User
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["id","username","email","password","is_librarian","is_blocked","is_active", "is_superuser"]
+        fields = ["id","username","email","password","is_librarian","is_blocked","is_active", "is_superuser", "user_borrow"]
         read_only_fields = ["id"]
         extra_kwargs = {"password": {"write_only": True}}
+        depth = 1
 
     def create(self, validated_data: dict) -> User:
         if validated_data['is_librarian']:

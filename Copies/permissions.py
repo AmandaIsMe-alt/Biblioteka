@@ -14,5 +14,4 @@ class IsAdminOrAccountOwner(permissions.BasePermission):
 
         else:
             return False
-    
 
