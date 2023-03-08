@@ -44,10 +44,11 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "rest_framework",
     "Books",
     "Copies",
     "Users",
-    "rest_framework",
+    
 ]
 
 MIDDLEWARE = [
@@ -132,6 +133,11 @@ REST_FRAMEWORK = {
     ),
     # "PAGE_SIZE": 2,
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(hours=15),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
 }
 
 

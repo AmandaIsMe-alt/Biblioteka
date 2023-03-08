@@ -3,16 +3,18 @@ from Users.models import User
 
 
 class Copy(models.Model):
-    total_amount = models.IntegerField()
-    borrow_amount = models.IntegerField()
+    total_amount = models.IntegerField(null=True, default=50)
+    borrow_amount = models.IntegerField(null=True, default=0)
+    teste = models.CharField(max_length=50, null=True)
 
     book = models.ForeignKey(
         "Books.Book",
         on_delete=models.CASCADE,
+        related_name="book_copy",
     )
 
     borrows = models.ManyToManyField(
-        User,
+        "Users.User",
         through="Copies.Borrow",
         related_name="user_borrows",
     )
