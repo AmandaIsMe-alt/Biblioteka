@@ -1,28 +1,36 @@
-from .models import Copy
+from .models import Copy, Borrow
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from .serializers import CopySerializer
+from .serializers import CopySerializer, BorrowSerializer
 from .permissions import IsAdminOrAccountOwner
-from rest_framework.views import APIView, Response, status
-from rest_framework.pagination import PageNumberPagination
+from rest_framework import generics
 
-class CopyView(APIView, PageNumberPagination):
+
+class CopyView(generics.ListCreateAPIView):
+
+    queryset = Copy.objects.all()
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAdminOrAccountOwner]
-    serializer_class = [CopySerializer]
+    serializer_class = CopySerializer
+
+
+class CopyDetailView(generics.CreateAPIView):
+    queryset = Copy.objects.all()
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAdminOrAccountOwner]
+    serializer_class = CopySerializer
+
+    def perform_create(self, serializer):
+        serializer.save(book_id=self.kwargs.get('copie_id'))
+
+
+class BorrowView(generics.ListCreateAPIView):
     
-
-    def get(self, request):
-        copy_list = Copy.objects.all()
-        result = self.paginate_queryset(copy_list, request, self)
-        serializer = CopySerializer(result, many=True)
-        return self.get_paginated_response(serializer.data)
-
-
-
-class CopyDetailView(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAdminOrAccountOwner]
-    serializer_class = [CopySerializer]
-    copy_list = Copy.objects.all()  
 
-    lookup_url_kwarg = "copy_id"
+    queryset = Borrow.objects.all()
+    serializer_class = BorrowSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(user_id=self.kwargs.get('user_id'), copy_id=self.kwargs.get('copie_id'))
+
