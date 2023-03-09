@@ -34,7 +34,6 @@ pytz==2022.7.1
 six==1.16.0
 sqlparse==0.4.3
 stack-data==0.6.2
-<<<<<<< HEAD
 tomli==2.0.1
 traitlets==5.9.0
 tzdata==2022.7
