@@ -6,10 +6,11 @@ from Users.models import User
 
 class Book(models.Model):
     title = models.CharField(max_length=255)
-    genre = models.CharField(max_length=255)
     author = models.CharField(max_length=255)
     release_year = models.IntegerField()
 
+    genres = models.ManyToManyField('Genres.Genre', related_name="books")
+    
     follows = models.ManyToManyField(
         User,
         through="Books.Follow",
