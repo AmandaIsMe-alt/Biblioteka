@@ -23,6 +23,7 @@ class Copy(models.Model):
 class Borrow(models.Model):
     borrow_date = models.DateTimeField(auto_now_add=True)
     return_date = models.DateTimeField(null=True)
+
     copy = models.ForeignKey(
         "Copies.Copy",
         on_delete=models.CASCADE,

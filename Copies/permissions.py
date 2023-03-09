@@ -1,7 +1,6 @@
 from rest_framework import permissions
-from rest_framework.views import Request, View
-from workalendar.america import Brazil
-import datetime
+from datetime import datetime, timedelta
+import ipdb
 
 
 class IsAdminOrAccountOwner(permissions.BasePermission):
@@ -15,3 +14,16 @@ class IsAdminOrAccountOwner(permissions.BasePermission):
         else:
             return False
 
+
+class BlockedBorrow(permissions.BasePermission):
+    def has_permission(self, request, view):
+        find_return_date = request.user.user_borrow.all()
+        date_now = datetime.now()
+        for date in find_return_date:
+            if date_now < date.return_date:
+                print("NÃO TENHO TEMPO")
+            else:
+                print("TENHO TEMPO")
+
+        # print("OOOOIIII", teste.borrow_date)
+        return True
