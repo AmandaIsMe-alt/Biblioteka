@@ -37,23 +37,4 @@ class BorrowSerializer(serializers.ModelSerializer):
         fields = ["id", "borrow_date", "return_date", "returned"]
         read_only_fields = ["return_date", "id"]
 
-    def get_return_date(self, obj: Borrow) -> dict:
-        followers = Follow.objects.filter(book=obj.copy.book.id).count()
-
-        return_date_att = obj.borrow_date
-
-        if followers > 10:
-            return_date_att += timedelta(days=3)
-        elif followers > 5:
-            return_date_att += timedelta(days=5)
-        else:
-            return_date_att += timedelta(days=7)
-
-        while return_date_att.isoweekday() == 6 or return_date_att.isoweekday() == 7:
-            return_date_att += timedelta(days=1)
-
-        obj.return_date = return_date_att
-
-        obj.save()
-        return return_date_att
     
