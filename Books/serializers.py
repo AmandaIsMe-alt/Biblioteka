@@ -9,8 +9,8 @@ class BookSerializer(serializers.ModelSerializer):
     genres = GenreSerializers(many=True)
 
     def create(self, validated_data):
-
         genres_to_add = validated_data.pop('genres')
+
         create_book = Book.objects.create(**validated_data)
         for genre in genres_to_add:
             genre_obj = Genre.objects.filter(name__iexact=genre["name"]).first()
