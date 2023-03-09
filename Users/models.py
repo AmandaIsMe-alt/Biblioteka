@@ -7,5 +7,5 @@ class User(AbstractUser):
     email = models.EmailField(max_length=127, unique=True, error_messages={"unique": "E-mail already in use"})
     password = models.CharField(max_length=127)
     is_librarian = models.BooleanField()
-    is_blocked = models.BooleanField(default=False)
+    blocked_until = models.DateTimeField(default=None, null=True)
     is_active = models.BooleanField(default=True)
