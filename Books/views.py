@@ -5,7 +5,12 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from .models import Book, Follow
 from .serializers import BookSerializer, FollowSerializer
 from Users.permissions import IsAdminOrAccountOwner
+from rest_framework import status
+from rest_framework.exceptions import APIException
 # Create your views here.
+
+class AlreadyFollow(APIException):
+    status_code = status.HTTP_400_BAD_REQUEST
 
 
 class BookView(ListCreateAPIView):
@@ -32,4 +37,9 @@ class FollowView(CreateAPIView):
     
 
     def perform_create(self, serializer):
+        already_follow = Follow.objects.filter(book_id=self.kwargs.get('book_id'), user=self.request.user)
+
+        if already_follow:
+            raise AlreadyFollow("Already following this book")
+
         serializer.save(book_id=self.kwargs.get('book_id'), user=self.request.user)

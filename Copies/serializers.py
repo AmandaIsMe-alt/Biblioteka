@@ -2,7 +2,7 @@ from rest_framework import serializers
 from Books.models import Follow
 from Copies.models import Copy
 from Copies.models import Borrow
-from datetime import timedelta
+from datetime import timedelta, datetime
 
 
 class CopySerializer(serializers.ModelSerializer):
@@ -10,7 +10,7 @@ class CopySerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Copy
-        fields = ["id", "teste", "total_amount", "borrow_amount", "book_id"]
+        fields = ["id", "total_amount", "borrow_amount", "book_id"]
         read_only_fields = ["id"]
 
     def create(self, validated_data):
@@ -30,17 +30,17 @@ class BorrowSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         return Borrow.objects.create(**validated_data)
     
+    
+    
     class Meta:
         model = Borrow
-        fields = ["id", "borrow_date", "return_date"]
+        fields = ["id", "borrow_date", "return_date", "returned"]
         read_only_fields = ["return_date", "id"]
 
     def get_return_date(self, obj: Borrow) -> dict:
         followers = Follow.objects.filter(book=obj.copy.book.id).count()
 
         return_date_att = obj.borrow_date
-
-        print(followers)
 
         if followers > 10:
             return_date_att += timedelta(days=3)
@@ -49,8 +49,11 @@ class BorrowSerializer(serializers.ModelSerializer):
         else:
             return_date_att += timedelta(days=7)
 
-        
         while return_date_att.isoweekday() == 6 or return_date_att.isoweekday() == 7:
             return_date_att += timedelta(days=1)
+
+        obj.return_date = return_date_att
+
+        obj.save()
         return return_date_att
     
