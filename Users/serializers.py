@@ -17,16 +17,13 @@ class UserSerializer(serializers.ModelSerializer):
     def get_user_borrows(self, obj):
         borrows = Borrow.objects.filter(user_id=obj.id)
         serializer = BorrowSerializer(borrows, many=True)
-        import ipdb
-        ipdb.set_trace()
         return serializer.data
 
     def create(self, validated_data: dict) -> User:
-        if validated_data['is_librarian']:
+        if validated_data["is_librarian"]:
             return User.objects.create_superuser(**validated_data)
 
         return User.objects.create_user(**validated_data)
-    
 
     def update(self, instance: User, validated_data: dict) -> User:
         for key, value in validated_data.items():

@@ -30,11 +30,11 @@ class CopyDetailView(generics.CreateAPIView):
     serializer_class = CopySerializer
 
     def perform_create(self, serializer):
-        serializer.save(book_id=self.kwargs.get('copie_id'))
+        serializer.save(book_id=self.kwargs.get("copie_id"))
 
 
 class BorrowView(generics.ListCreateAPIView):
-    
+
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAdminOrAccountOwner]
 

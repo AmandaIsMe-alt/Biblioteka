@@ -1,7 +1,6 @@
 from rest_framework import permissions
-from rest_framework.views import Request, View
-from workalendar.america import Brazil
-import datetime
+from datetime import datetime, timedelta
+import ipdb
 
 
 class IsAdminOrAccountOwner(permissions.BasePermission):
