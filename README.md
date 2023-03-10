@@ -13,9 +13,9 @@
  - Python
  - Django
  
- **Base URL: **
+ **Base URL:**
 
- **Documentation: **
+ **Documentation:**
 
  ## **Devs**
 
