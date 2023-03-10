@@ -1,10 +1,9 @@
 from django.shortcuts import render
-from rest_framework.generics import ListCreateAPIView, RetrieveAPIView, CreateAPIView
+from rest_framework.generics import ListCreateAPIView, CreateAPIView, RetrieveUpdateDestroyAPIView
 from .permissions import IsAdminOrReadOnly
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from .models import Book, Follow
 from .serializers import BookSerializer, FollowSerializer
-from Users.permissions import IsAdminOrAccountOwner
 from rest_framework import status
 from rest_framework.exceptions import APIException
 # Create your views here.
@@ -16,13 +15,16 @@ class AlreadyFollow(APIException):
 class BookView(ListCreateAPIView):
 
     authentication_classes = [JWTAuthentication]
-    #permission_classes = [IsAdminOrReadOnly]
+    permission_classes = [IsAdminOrReadOnly]
 
     queryset = Book.objects.all()
     serializer_class = BookSerializer
 
 
-class BookDetailView(RetrieveAPIView):
+class BookDetailView(RetrieveUpdateDestroyAPIView):
+
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAdminOrReadOnly]
 
     queryset = Book.objects.all()
     serializer_class = BookSerializer
