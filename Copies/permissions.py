@@ -1,6 +1,4 @@
 from rest_framework import permissions
-from datetime import datetime, timedelta
-import ipdb
 
 
 class IsAdminOrAccountOwner(permissions.BasePermission):
@@ -13,4 +11,3 @@ class IsAdminOrAccountOwner(permissions.BasePermission):
 
         else:
             return False
-

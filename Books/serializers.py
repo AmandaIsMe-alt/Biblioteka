@@ -9,7 +9,7 @@ class BookSerializer(serializers.ModelSerializer):
     genres = GenreSerializers(many=True)
 
     def create(self, validated_data):
-        genres_to_add = validated_data.pop('genres')
+        genres_to_add = validated_data.pop("genres")
 
         create_book = Book.objects.create(**validated_data)
         for genre in genres_to_add:
@@ -19,9 +19,17 @@ class BookSerializer(serializers.ModelSerializer):
             create_book.genres.add(genre_obj)
 
         return create_book
+
     class Meta:
         model = Book
-        fields = ["id","title","genres","author","release_year",]
+        fields = [
+            "id",
+            "title",
+            "genres",
+            "author",
+            "release_year",
+        ]
+
 
 class FollowSerializer(serializers.ModelSerializer):
     class Meta:
