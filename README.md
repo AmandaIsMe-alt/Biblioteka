@@ -5,7 +5,7 @@
  This application is a online library system, where each book can only be borrowed for a fixed period of time. There are CRUD of employees, users, books, genres, and this is just the first page.
 
  ## <strong>ER Diagram: </strong>
- ![Diagrams](Biblioteka.drawio.png)<br><br>
+ <br><br>
 
 
  Main technologies used:
@@ -24,7 +24,7 @@
  > - [Igor Ramon](https://www.linkedin.com/in/igor-ramon-rio-tinto/)
  > - [Vinicius Pacheco](https://www.linkedin.com/in/viniciusgrp/)
 
- ## **2. Start the project: **
+ ## **2. Start the project:**
  ### Type the command in the terminal:
 
 ```json
