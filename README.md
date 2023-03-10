@@ -27,6 +27,6 @@
 + ## **2. Start the project: **
 + ### Type the command in the terminal:
 +
-+ ```json
-+  pip install -r requirements.txt
-+ ```
+```json
+  pip install -r requirements.txt
+ ```
