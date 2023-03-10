@@ -19,6 +19,23 @@ class BookSerializer(serializers.ModelSerializer):
             create_book.genres.add(genre_obj)
 
         return create_book
+    
+    def update(self, instance: Book, validated_data):
+
+        genres_to_update = validated_data.pop('genres')
+
+        if genres_to_update:
+            instance.genres.clear()
+            for genre in genres_to_update:
+                genre_obj = Genre.objects.filter(name__iexact=genre["name"]).first()
+                if not genre_obj:
+                    genre_obj = Genre.objects.create(**genre)
+                instance.genres.add(genre_obj)
+        
+        for key, value in validated_data.items():
+            setattr(instance, key, value)
+
+        return instance
     class Meta:
         model = Book
         fields = ["id","title","genres","author","release_year",]
