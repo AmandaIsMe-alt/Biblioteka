@@ -5,7 +5,7 @@
  This application is a online library system, where each book can only be borrowed for a fixed period of time. There are CRUD of employees, users, books, genres, and this is just the first page.
 
  ## <strong>ER Diagram: </strong>
- (Biblioteka.drawio.png)<br><br>
+ ![Diagrams](Biblioteka.drawio.png)<br><br>
 
 
  Main technologies used:
