@@ -14,6 +14,7 @@ from pathlib import Path
 from datetime import timedelta
 import os
 import dotenv
+import environ
 
 dotenv.load_dotenv()
 # (...)
@@ -21,6 +22,18 @@ dotenv.load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+env = environ.Env(
+    DEBUG=(bool, False)
+)
+
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.Emailbackend",
+EMAIL_USE_TLS = True,
+EMAIL_HOST = env("EMAIL_HOST"),
+EMAIL_PORT = env("EMAIL_PORT"),
+EMAIL_HOST_USER = env("EMAIL_HOST_USER"),
+EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
@@ -134,6 +147,9 @@ REST_FRAMEWORK = {
     # "PAGE_SIZE": 2,
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
+
+
+
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(hours=15),
