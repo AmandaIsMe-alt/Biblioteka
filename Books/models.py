@@ -8,6 +8,8 @@ class Book(models.Model):
     title = models.CharField(max_length=255)
     author = models.CharField(max_length=255)
     release_year = models.IntegerField()
+    synopsis = models.TextField(null=True)
+    publisher_company = models.CharField(max_length=255, default="Freelancer Work")
 
     genres = models.ManyToManyField('Genres.Genre', related_name="books")
     

@@ -3,10 +3,16 @@ from Books.models import Follow
 from Copies.models import Copy
 from Copies.models import Borrow
 from datetime import timedelta, datetime
-import ipdb
+from rest_framework.exceptions import APIException
+from rest_framework import status
+
+
+class CopyExeption(APIException):
+    status_code = status.HTTP_400_BAD_REQUEST
 
 
 class CopySerializer(serializers.ModelSerializer):
+
     total_amount = serializers.SerializerMethodField()
 
     def get_total_amount(self, obj: Copy) -> dict:
@@ -16,7 +22,7 @@ class CopySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Copy
-        fields = ["id", "total_amount", "borrow_amount", "book_id"]
+        fields = ["id", "total_amount", "is_active", "book_id"]
         read_only_fields = ["id"]
 
     def create(self, validated_data):
@@ -28,13 +34,24 @@ class CopySerializer(serializers.ModelSerializer):
 class BorrowSerializer(serializers.ModelSerializer):
     class Meta:
         model = Borrow
-        fields = ["id", "borrow_date", "return_date", "returned"]
-        read_only_fields = ["return_date", "id"]
+        fields = ["id", "copy", "borrow_date", "return_date", "returned"]
+        read_only_fields = ["copy", "return_date", "id"]
 
     def create(self, validated_data):
-        copy = Copy.objects.filter(id=validated_data["copy_id"]).first()
 
-        followers = Follow.objects.filter(book=copy.id).count()
+        copies = Copy.objects.all()
+
+        copy_filter = copies.filter(id=validated_data["copy_id"]).first()
+
+        if not copy_filter:
+            raise CopyExeption("Copy does not exist")
+        elif copy_filter.is_active is False:
+            raise CopyExeption("Copy is already in use")
+
+        copy_filter.is_active = False
+        copy_filter.save()
+
+        followers = Follow.objects.filter(book=copy_filter.book_id).count()
 
         date_now = datetime.now() + timedelta(days=5)
 
