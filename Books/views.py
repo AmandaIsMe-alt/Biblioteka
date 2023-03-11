@@ -5,7 +5,6 @@ from rest_framework.generics import (
 )
 from .permissions import IsAdminOrReadOnly
 from rest_framework_simplejwt.authentication import JWTAuthentication
-
 from rest_framework.permissions import IsAuthenticated
 from .models import Book, Follow
 from .serializers import BookSerializer, FollowSerializer
@@ -22,7 +21,7 @@ class AlreadyFollow(APIException):
 class BookView(ListCreateAPIView):
 
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAdminOrReadOnly]
+    permission_classes = [IsAuthenticated, IsAdminOrReadOnly]
 
     queryset = Book.objects.all()
     serializer_class = BookSerializer
@@ -31,7 +30,7 @@ class BookView(ListCreateAPIView):
 class BookDetailView(RetrieveUpdateDestroyAPIView):
 
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAdminOrReadOnly]
+    permission_classes = [IsAuthenticated, IsAdminOrReadOnly]
 
     queryset = Book.objects.all()
     serializer_class = BookSerializer
@@ -50,8 +49,9 @@ class FollowView(CreateAPIView):
         already_follow = Follow.objects.filter(
             book_id=self.kwargs.get("book_id"), user=self.request.user
         )
-
-        if already_follow:
+        if not already_follow:
+            raise AlreadyFollow("This book does not exist")
+        elif already_follow:
             raise AlreadyFollow("Already following this book")
 
         serializer.save(book_id=self.kwargs.get("book_id"), user=self.request.user)

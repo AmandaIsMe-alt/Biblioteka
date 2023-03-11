@@ -1,7 +1,7 @@
 from .models import Copy, Borrow
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from .serializers import CopySerializer, BorrowSerializer
-from rest_framework.permissions import IsAdminUser
+from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework import generics
 from Copies.models import Borrow
 from datetime import datetime, timedelta
@@ -11,6 +11,7 @@ from Users.models import User
 import pytz
 from rest_framework.response import Response
 from Users.permissions import IsAdminOrAccountOwner
+from Books.models import Book
 
 
 class UserHadPendencys(APIException):
@@ -35,13 +36,18 @@ class CopyDetailView(generics.CreateAPIView):
     serializer_class = CopySerializer
 
     def perform_create(self, serializer):
-        serializer.save(book_id=self.kwargs.get("copie_id"))
+        found_book = Book.objects.filter(id=self.kwargs.get("book_id"))
+
+        if not found_book:
+            raise UserHadPendencys("There is no book with that ID")
+
+        serializer.save(book_id=self.kwargs.get("book_id"))
 
 
 class BorrowView(generics.ListCreateAPIView):
 
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAdminOrAccountOwner]
+    permission_classes = [IsAuthenticated, IsAdminOrAccountOwner]
 
     # queryset = Borrow.objects.all()
     serializer_class = BorrowSerializer
