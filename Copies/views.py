@@ -1,7 +1,7 @@
 from .models import Copy, Borrow
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from .serializers import CopySerializer, BorrowSerializer
-from .permissions import IsAdminOrAccountOwner
+from rest_framework.permissions import IsAdminUser
 from rest_framework import generics
 from Copies.models import Borrow
 from datetime import datetime, timedelta
@@ -10,6 +10,7 @@ from rest_framework.exceptions import APIException
 from Users.models import User
 import pytz
 from rest_framework.response import Response
+from Users.permissions import IsAdminOrAccountOwner
 
 
 class UserHadPendencys(APIException):
@@ -18,16 +19,19 @@ class UserHadPendencys(APIException):
 
 class CopyView(generics.ListCreateAPIView):
 
-    queryset = Copy.objects.all()
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAdminOrAccountOwner]
+    permission_classes = [IsAdminUser]
+
+    queryset = Copy.objects.all()
     serializer_class = CopySerializer
 
 
 class CopyDetailView(generics.CreateAPIView):
-    queryset = Copy.objects.all()
+
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAdminOrAccountOwner]
+    permission_classes = [IsAdminUser]
+
+    queryset = Copy.objects.all()
     serializer_class = CopySerializer
 
     def perform_create(self, serializer):
@@ -39,8 +43,17 @@ class BorrowView(generics.ListCreateAPIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAdminOrAccountOwner]
 
-    queryset = Borrow.objects.all()
+    # queryset = Borrow.objects.all()
     serializer_class = BorrowSerializer
+
+    def get_queryset(self):
+        if (
+            self.request.user.is_superuser is False
+            and self.request.user.id is self.kwargs.get("user_id")
+        ):
+            return Borrow.objects.filter(user=self.request.user.id)
+        elif self.request.user.is_superuser:
+            return Borrow.objects.filter(user=self.kwargs.get("user_id"))
 
     def perform_create(self, serializer):
         user = User.objects.filter(pk=self.kwargs.get("user_id")).first()
@@ -70,7 +83,7 @@ class BorrowView(generics.ListCreateAPIView):
 
 class BorrowReturn(generics.UpdateAPIView):
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAdminOrAccountOwner]
+    permission_classes = [IsAdminUser]
 
     queryset = Borrow.objects.all()
     serializer_class = BorrowSerializer

@@ -34,8 +34,8 @@ class CopySerializer(serializers.ModelSerializer):
 class BorrowSerializer(serializers.ModelSerializer):
     class Meta:
         model = Borrow
-        fields = ["id", "copy", "borrow_date", "return_date", "returned"]
-        read_only_fields = ["copy", "return_date", "id"]
+        fields = ["id", "user", "copy", "borrow_date", "return_date", "returned"]
+        read_only_fields = ["user", "copy", "return_date", "id"]
 
     def create(self, validated_data):
 
