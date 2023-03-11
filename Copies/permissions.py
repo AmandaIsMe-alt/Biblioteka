@@ -11,3 +11,15 @@ class IsAdminOrAccountOwner(permissions.BasePermission):
 
         else:
             return False
+
+
+class IsAdminOrReadAccountOnly(permissions.BasePermission):
+    def has_object_permission(self, request, view, borrows):
+        if request.user.is_librarian:
+            return True
+        
+        for borrow in borrows:
+            if borrow.user.id != request.user.id:
+                return False
+        
+        return True

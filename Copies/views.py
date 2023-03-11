@@ -11,6 +11,7 @@ from Users.models import User
 import pytz
 from rest_framework.response import Response
 from Users.permissions import IsAdminOrAccountOwner
+from .permissions import IsAdminOrReadAccountOnly
 
 
 class UserHadPendencys(APIException):
@@ -38,24 +39,16 @@ class CopyDetailView(generics.CreateAPIView):
         serializer.save(book_id=self.kwargs.get("copie_id"))
 
 
-class BorrowView(generics.ListCreateAPIView):
+class BorrowView(generics.CreateAPIView):
 
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAdminOrAccountOwner]
+    permission_classes = [IsAdminUser]
 
-    # queryset = Borrow.objects.all()
+    queryset = Borrow.objects.all()
     serializer_class = BorrowSerializer
 
-    def get_queryset(self):
-        if (
-            self.request.user.is_superuser is False
-            and self.request.user.id is self.kwargs.get("user_id")
-        ):
-            return Borrow.objects.filter(user=self.request.user.id)
-        elif self.request.user.is_superuser:
-            return Borrow.objects.filter(user=self.kwargs.get("user_id"))
-
     def perform_create(self, serializer):
+        self.check_object_permissions()
         user = User.objects.filter(pk=self.kwargs.get("user_id")).first()
         days = datetime.now(pytz.UTC)
 
@@ -81,6 +74,20 @@ class BorrowView(generics.ListCreateAPIView):
         )
 
 
+class GetBorrow(generics.ListAPIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAdminOrReadAccountOnly]
+
+    queryset = Borrow.objects.all()
+    serializer_class = BorrowSerializer
+
+    def get(self, request, *args, **kwargs):
+        obj = Borrow.objects.filter(user_id=kwargs.get("user_id"))
+        self.check_object_permissions(request, obj)
+        serializer = BorrowSerializer(obj, many=True)
+        return Response(serializer.data)
+
+
 class BorrowReturn(generics.UpdateAPIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAdminUser]
@@ -97,6 +104,8 @@ class BorrowReturn(generics.UpdateAPIView):
             returned=False,
         ).first()
 
+        copy = Copy.objects.filter(pk=self.kwargs.get("copie_id")).first()
+
         days = datetime.now(pytz.UTC)
 
         if not borrow:
@@ -107,6 +116,8 @@ class BorrowReturn(generics.UpdateAPIView):
             block_time = days + timedelta(days=7)
             user.blocked_until = block_time
             user.save()
+            copy.is_active = True
+            copy.save()
             borrow.returned = True
             borrow.save()
             return Response(
@@ -115,10 +126,9 @@ class BorrowReturn(generics.UpdateAPIView):
                 },
                 status=200,
             )
-        import ipdb
-
-        # ipdb.set_trace()
 
         borrow.returned = True
         borrow.save()
+        copy.is_active = True
+        copy.save()
         return Response({"success": "Book successfully returned"}, status=200)
