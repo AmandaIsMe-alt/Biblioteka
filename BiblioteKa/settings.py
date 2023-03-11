@@ -22,17 +22,15 @@ dotenv.load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-env = environ.Env(
-    DEBUG=(bool, False)
-)
+env = environ.Env(DEBUG=(bool, False))
 
-environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 
-EMAIL_BACKEND = "django.core.mail.backends.smtp.Emailbackend",
-EMAIL_USE_TLS = True,
-EMAIL_HOST = env("EMAIL_HOST"),
-EMAIL_PORT = env("EMAIL_PORT"),
-EMAIL_HOST_USER = env("EMAIL_HOST_USER"),
+EMAIL_BACKEND = ("django.core.mail.backends.smtp.Emailbackend",)
+EMAIL_USE_TLS = (True,)
+EMAIL_HOST = (env("EMAIL_HOST"),)
+EMAIL_PORT = (env("EMAIL_PORT"),)
+EMAIL_HOST_USER = (env("EMAIL_HOST_USER"),)
 EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
 
 # Quick-start development settings - unsuitable for production
@@ -99,14 +97,14 @@ WSGI_APPLICATION = "BiblioteKa.wsgi.application"
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
 DATABASES = {
-  "default": {
-      "ENGINE": "django.db.backends.postgresql",
-      "NAME": os.getenv("POSTGRES_DB_NAME"),
-      "USER": os.getenv("POSTGRES_USERNAME"),
-      "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
-      "HOST": os.getenv("POSTGRES_DB_HOST"),
-      "PORT": os.getenv("POSTGRES_PORT"),
-  }
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.getenv("POSTGRES_DB_NAME"),
+        "USER": os.getenv("POSTGRES_USERNAME"),
+        "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
+        "HOST": os.getenv("POSTGRES_DB_HOST"),
+        "PORT": os.getenv("POSTGRES_PORT"),
+    }
 }
 
 
@@ -147,8 +145,6 @@ REST_FRAMEWORK = {
     # "PAGE_SIZE": 2,
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
-
-
 
 
 SIMPLE_JWT = {

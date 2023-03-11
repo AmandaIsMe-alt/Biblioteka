@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Book, Follow
+from Copies.models import Copy
 from Genres.serializers import GenreSerializers
 from Genres.models import Genre
 
@@ -7,6 +8,12 @@ from Genres.models import Genre
 class BookSerializer(serializers.ModelSerializer):
 
     genres = GenreSerializers(many=True)
+    number_copies_available = serializers.SerializerMethodField()
+
+    def get_number_copies_available(self, obj: Copy) -> dict:
+        all_copies = Copy.objects.all()
+        count_total_amount = all_copies.filter(book_id=obj.id, is_active=True)
+        return count_total_amount.count()
 
     def create(self, validated_data):
         genres_to_add = validated_data.pop("genres")
@@ -19,10 +26,10 @@ class BookSerializer(serializers.ModelSerializer):
             create_book.genres.add(genre_obj)
 
         return create_book
-    
+
     def update(self, instance: Book, validated_data):
 
-        genres_to_update = validated_data.pop('genres')
+        genres_to_update = validated_data.pop("genres")
 
         if genres_to_update:
             instance.genres.clear()
@@ -31,22 +38,25 @@ class BookSerializer(serializers.ModelSerializer):
                 if not genre_obj:
                     genre_obj = Genre.objects.create(**genre)
                 instance.genres.add(genre_obj)
-        
+
         for key, value in validated_data.items():
             setattr(instance, key, value)
 
         return instance
-
 
     class Meta:
         model = Book
         fields = [
             "id",
             "title",
-            "genres",
             "author",
+            "number_copies_available",
             "release_year",
+            "publisher_company",
+            "synopsis",
+            "genres",
         ]
+        read_only_fields = ["id", "number_copies_available"]
 
 
 class FollowSerializer(serializers.ModelSerializer):
