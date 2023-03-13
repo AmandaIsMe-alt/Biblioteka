@@ -16,6 +16,7 @@ class BookSerializer(serializers.ModelSerializer):
         return count_total_amount.count()
 
     def create(self, validated_data):
+        
         genres_to_add = validated_data.pop("genres")
 
         create_book = Book.objects.create(**validated_data)
@@ -29,7 +30,7 @@ class BookSerializer(serializers.ModelSerializer):
 
     def update(self, instance: Book, validated_data):
 
-        genres_to_update = validated_data.pop("genres")
+        genres_to_update = validated_data.pop("genres", None)
 
         if genres_to_update:
             instance.genres.clear()
