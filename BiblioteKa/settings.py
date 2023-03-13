@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     "Copies",
     "Users",
     "Genres",
+    "drf_spectacular",
 ]
 
 MIDDLEWARE = [
@@ -144,6 +145,13 @@ REST_FRAMEWORK = {
     ),
     # "PAGE_SIZE": 2,
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "BiblioteKa Grupo 30",
+    "DESCRIPTION": "API para gerenciamento de biblioteca",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": True,
 }
 
 
