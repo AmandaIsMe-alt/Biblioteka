@@ -46,10 +46,12 @@ class FollowView(CreateAPIView):
     serializer_class = FollowSerializer
 
     def perform_create(self, serializer):
+        book_found = Book.objects.filter(id=self.kwargs.get("book_id"))
+
         already_follow = Follow.objects.filter(
             book_id=self.kwargs.get("book_id"), user=self.request.user
         )
-        if not already_follow:
+        if not book_found:
             raise AlreadyFollow("This book does not exist")
         elif already_follow:
             raise AlreadyFollow("Already following this book")

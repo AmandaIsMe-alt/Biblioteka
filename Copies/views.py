@@ -11,7 +11,10 @@ from Users.models import User
 import pytz
 from rest_framework.response import Response
 from Users.permissions import IsAdminOrAccountOwner
-from Books.models import Book
+from Books.models import Book, Follow
+from django.core.mail import send_mail
+from django.conf import settings
+
 
 
 class UserHadPendencys(APIException):
@@ -99,6 +102,7 @@ class BorrowReturn(generics.UpdateAPIView):
     lookup_field = "copie_id"
 
     def patch(self, request, *args, **kwargs):
+        print("ENTREEI NO PATCH")
         borrow = Borrow.objects.filter(
             user_id=self.kwargs.get("user_id"),
             copy=self.kwargs.get("copie_id"),
@@ -123,7 +127,40 @@ class BorrowReturn(generics.UpdateAPIView):
                 },
                 status=200,
             )
+        
+        copy1 = Copy.objects.filter(
+            id=self.kwargs.get("copie_id")
+        ).first()
+        copy1.is_active = True
+        copy1.save()
+
+        book = Book.objects.filter(
+            id=copy1.book_id
+        ).first()
 
         borrow.returned = True
         borrow.save()
+
+        verified_copies = Copy.objects.filter(is_active=True).all()
+
+        if verified_copies.count() > 0:
+            print("CHEGUEEEII NO IF")
+            follow = Follow.objects.filter(
+                book=copy1.book_id
+            ).first()
+
+            users = User.objects.filter(
+                id=follow.user_id
+            ).first()
+            print("OI USER", users.email)
+
+            send_mail(
+                subject="O livro que você segue está disponível na BiblioteKA",
+                message="O livro que você segue está disponível na BiblioteKA.",
+                from_email=settings.EMAIL_HOST_USER,
+                recipient_list=[users.email],
+                fail_silently=False
+                )
+
+
         return Response({"success": "Book successfully returned"}, status=200)
