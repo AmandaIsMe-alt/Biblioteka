@@ -5,6 +5,7 @@ from .permissions import IsAdminOrAccountOwner
 from rest_framework import generics
 
 
+
 class CopyView(generics.ListCreateAPIView):
 
     queryset = Copy.objects.all()
