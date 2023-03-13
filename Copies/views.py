@@ -44,22 +44,23 @@ class CopyDetailView(generics.CreateAPIView):
         serializer.save(book_id=self.kwargs.get("book_id"))
 
 
-class BorrowView(generics.ListCreateAPIView):
-
+class BorrowView(generics.ListAPIView):
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated, IsAdminOrAccountOwner]
+    permission_classes = [IsAuthenticated]
 
-    # queryset = Borrow.objects.all()
     serializer_class = BorrowSerializer
 
     def get_queryset(self):
-        if (
-            self.request.user.is_superuser is False
-            and self.request.user.id is self.kwargs.get("user_id")
-        ):
-            return Borrow.objects.filter(user=self.request.user.id)
-        elif self.request.user.is_superuser:
-            return Borrow.objects.filter(user=self.kwargs.get("user_id"))
+        return Borrow.objects.filter(user=self.request.user.id)
+
+
+class BorrowDetailView(generics.CreateAPIView):
+
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated, IsAdminUser]
+
+    queryset = Borrow.objects.all()
+    serializer_class = BorrowSerializer
 
     def perform_create(self, serializer):
         user = User.objects.filter(pk=self.kwargs.get("user_id")).first()
@@ -121,9 +122,6 @@ class BorrowReturn(generics.UpdateAPIView):
                 },
                 status=200,
             )
-        import ipdb
-
-        # ipdb.set_trace()
 
         borrow.returned = True
         borrow.save()
