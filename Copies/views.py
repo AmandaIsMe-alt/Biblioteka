@@ -16,10 +16,8 @@ from django.core.mail import send_mail
 from django.conf import settings
 
 
-
 class UserHadPendencys(APIException):
     status_code = status.HTTP_400_BAD_REQUEST
-
 
 
 class CopyView(generics.ListCreateAPIView):
@@ -126,7 +124,7 @@ class BorrowReturn(generics.UpdateAPIView):
                 },
                 status=200,
             )
-        
+
         copy1 = Copy.objects.filter(
             id=self.kwargs.get("copie_id")
         ).first()
@@ -142,30 +140,22 @@ class BorrowReturn(generics.UpdateAPIView):
 
         verified_copies = Copy.objects.filter(is_active=True).all()
 
-
         follow = Follow.objects.filter(book=copy1.book_id).first()
-        
-        
+
         if follow: 
             if verified_copies.count() > 0: 
-                follow = Follow.objects.filter(
+                follows = Follow.objects.filter(
                     book=copy1.book_id
-                ).first()
-
-                users = User.objects.filter(
-                    id=follow.user_id
-                ).first()
-                print("OI USER", users.email)
-
-                print("Ta ai????", settings.EMAIL_HOST_USER[0])
+                ).all()
+                
+                emails = [follow.user.email for follow in follows]
 
                 send_mail(
                     subject="O livro que você segue está disponível na BiblioteKA",
                     message="O livro que você segue está disponível na BiblioteKA.",
-                    from_email="bibliotekag30@gmail.com",
-                    recipient_list="amanda.costa1301@hotmail.com",
+                    from_email=settings.EMAIL_HOST_USER,
+                    recipient_list=emails,
                     fail_silently=False
                     )
-                
 
         return Response({"success": "Book successfully returned"}, status=200)
