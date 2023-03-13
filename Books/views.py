@@ -21,7 +21,7 @@ class AlreadyFollow(APIException):
 class BookView(ListCreateAPIView):
 
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated, IsAdminOrReadOnly]
+    permission_classes = [IsAdminOrReadOnly]
 
     queryset = Book.objects.all()
     serializer_class = BookSerializer
@@ -30,7 +30,7 @@ class BookView(ListCreateAPIView):
 class BookDetailView(RetrieveUpdateDestroyAPIView):
 
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated, IsAdminOrReadOnly]
+    permission_classes = [IsAdminOrReadOnly]
 
     queryset = Book.objects.all()
     serializer_class = BookSerializer
