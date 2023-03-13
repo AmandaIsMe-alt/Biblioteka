@@ -10,6 +10,7 @@ from .models import Book, Follow
 from .serializers import BookSerializer, FollowSerializer
 from rest_framework import status
 from rest_framework.exceptions import APIException
+from django.shortcuts import get_object_or_404
 
 # Create your views here.
 
@@ -51,9 +52,16 @@ class FollowView(CreateAPIView):
         already_follow = Follow.objects.filter(
             book_id=self.kwargs.get("book_id"), user=self.request.user
         )
+<<<<<<< HEAD
         if not book_found:
             raise AlreadyFollow("This book does not exist")
         elif already_follow:
+=======
+        
+        if already_follow:
+>>>>>>> cc38fe2986de628ea7395c390e26185c6f62dbce
             raise AlreadyFollow("Already following this book")
+        
+        book = get_object_or_404(Book, pk=self.kwargs.get("book_id"))
 
-        serializer.save(book_id=self.kwargs.get("book_id"), user=self.request.user)
+        serializer.save(book=book, user=self.request.user)
