@@ -102,7 +102,6 @@ class BorrowReturn(generics.UpdateAPIView):
     lookup_field = "copie_id"
 
     def patch(self, request, *args, **kwargs):
-        print("ENTREEI NO PATCH")
         borrow = Borrow.objects.filter(
             user_id=self.kwargs.get("user_id"),
             copy=self.kwargs.get("copie_id"),
@@ -143,24 +142,30 @@ class BorrowReturn(generics.UpdateAPIView):
 
         verified_copies = Copy.objects.filter(is_active=True).all()
 
-        if verified_copies.count() > 0:
-            print("CHEGUEEEII NO IF")
-            follow = Follow.objects.filter(
-                book=copy1.book_id
-            ).first()
 
-            users = User.objects.filter(
-                id=follow.user_id
-            ).first()
-            print("OI USER", users.email)
+        follow = Follow.objects.filter(book=copy1.book_id).first()
+        
+        
+        if follow: 
+            if verified_copies.count() > 0: 
+                follow = Follow.objects.filter(
+                    book=copy1.book_id
+                ).first()
 
-            send_mail(
-                subject="O livro que você segue está disponível na BiblioteKA",
-                message="O livro que você segue está disponível na BiblioteKA.",
-                from_email=settings.EMAIL_HOST_USER,
-                recipient_list=[users.email],
-                fail_silently=False
-                )
+                users = User.objects.filter(
+                    id=follow.user_id
+                ).first()
+                print("OI USER", users.email)
 
+                print("Ta ai????", settings.EMAIL_HOST_USER[0])
+
+                send_mail(
+                    subject="O livro que você segue está disponível na BiblioteKA",
+                    message="O livro que você segue está disponível na BiblioteKA.",
+                    from_email="bibliotekag30@gmail.com",
+                    recipient_list="amanda.costa1301@hotmail.com",
+                    fail_silently=False
+                    )
+                
 
         return Response({"success": "Book successfully returned"}, status=200)
