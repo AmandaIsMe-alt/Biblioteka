@@ -2,55 +2,69 @@ from rest_framework import serializers
 from Books.models import Follow
 from Copies.models import Copy
 from Copies.models import Borrow
-from datetime import timedelta
+from datetime import timedelta, datetime
+from rest_framework.exceptions import APIException
+from rest_framework import status
+
+
+class CopyExeption(APIException):
+    status_code = status.HTTP_400_BAD_REQUEST
 
 
 class CopySerializer(serializers.ModelSerializer):
-    total_amount = serializers.SerializerMethodField()
-    
-    class Meta:
-        model = Copy
-        fields = ["id", "teste", "total_amount", "borrow_amount", "book_id"]
-        read_only_fields = ["id"]
 
-    def create(self, validated_data):
-        return Copy.objects.create(**validated_data)
+    total_amount = serializers.SerializerMethodField()
 
     def get_total_amount(self, obj: Copy) -> dict:
         all_copies = Copy.objects.all()
         count_total_amount = all_copies.filter(book_id=obj.book_id)
         return count_total_amount.count()
-    
+
+    class Meta:
+        model = Copy
+        fields = ["id", "total_amount", "is_active", "book_id"]
+        read_only_fields = ["id"]
+
+    def create(self, validated_data):
+        return Copy.objects.create(**validated_data)
+
     # def get_borrow_amount(self, obj: Copy) -> dict:
 
 
 class BorrowSerializer(serializers.ModelSerializer):
-    return_date = serializers.SerializerMethodField()
-
-    def create(self, validated_data):
-        return Borrow.objects.create(**validated_data)
-    
     class Meta:
         model = Borrow
-        fields = ["id", "borrow_date", "return_date"]
-        read_only_fields = ["return_date", "id"]
+        fields = ["id", "user", "copy", "borrow_date", "return_date", "returned"]
+        read_only_fields = ["user", "copy", "return_date", "id"]
 
-    def get_return_date(self, obj: Borrow) -> dict:
-        followers = Follow.objects.filter(book=obj.copy.book.id).count()
+    def create(self, validated_data):
 
-        return_date_att = obj.borrow_date
+        copies = Copy.objects.all()
 
-        print(followers)
+        copy_filter = copies.filter(id=validated_data["copy_id"]).first()
+
+        if not copy_filter:
+            raise CopyExeption("Copy does not exist")
+        elif copy_filter.is_active is False:
+            raise CopyExeption("Copy is already in use")
+
+        copy_filter.is_active = False
+        copy_filter.save()
+
+        followers = Follow.objects.filter(book=copy_filter.book_id).count()
+
+        date_now = datetime.now() + timedelta(days=5)
 
         if followers > 10:
-            return_date_att += timedelta(days=3)
+            date_now += timedelta(days=3)
         elif followers > 5:
-            return_date_att += timedelta(days=5)
+            date_now += timedelta(days=5)
         else:
-            return_date_att += timedelta(days=7)
+            date_now += timedelta(days=7)
 
-        
-        while return_date_att.isoweekday() == 6 or return_date_att.isoweekday() == 7:
-            return_date_att += timedelta(days=1)
-        return return_date_att
-    
+        while date_now.isoweekday() == 6 or date_now.isoweekday() == 7:
+            date_now += timedelta(days=1)
+
+        validated_data["return_date"] = date_now
+
+        return Borrow.objects.create(**validated_data)

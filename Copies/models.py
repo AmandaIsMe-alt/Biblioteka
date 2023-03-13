@@ -1,11 +1,8 @@
 from django.db import models
-from Users.models import User
 
 
 class Copy(models.Model):
-    total_amount = models.IntegerField(null=True, default=50)
-    borrow_amount = models.IntegerField(null=True, default=0)
-    teste = models.CharField(max_length=50, null=True)
+    is_active = models.BooleanField(default=True)
 
     book = models.ForeignKey(
         "Books.Book",
@@ -23,6 +20,8 @@ class Copy(models.Model):
 class Borrow(models.Model):
     borrow_date = models.DateTimeField(auto_now_add=True)
     return_date = models.DateTimeField(null=True)
+    returned = models.BooleanField(default=False)
+
     copy = models.ForeignKey(
         "Copies.Copy",
         on_delete=models.CASCADE,
