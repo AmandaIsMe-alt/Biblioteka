@@ -16,6 +16,10 @@
  **Base URL: https://bibliotekag-30.onrender.com**
 
  **Documentation:**
+ 
+ https://bibliotekag-30.onrender.com/api/schema/
+ 
+ https://bibliotekag-30.onrender.com/api/docs/swagger/
 
   https://bibliotekag-30.onrender.com/api/schema/
 
@@ -32,5 +36,15 @@
  ### Type the command in the terminal:
 
 ```json
-  pip install -r requirements.txt
+  Criar Ambiente Venv : python -m venv venv
+  
+  Ativar Ambiente Venv : source venv/Scripts/activate -> para Windows // source venv/bin/activate -> para Linux
+  
+  Instalar Pacotes : pip install -r requirements.txt
+
+  Preencher informações sensíveis no arquivo ENV
+  
+  Gerar Migrações : python manage.py migrate
+  
+  Iniciar Servidor : python manage.py runserver
  ```
