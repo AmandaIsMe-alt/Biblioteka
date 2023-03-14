@@ -68,6 +68,9 @@ class BorrowDetailView(generics.CreateAPIView):
         user = User.objects.filter(pk=self.kwargs.get("user_id")).first()
         days = datetime.now(pytz.UTC)
 
+        if not user:
+            raise UserHadPendencys("User does not exist")
+
         if user.blocked_until:
             if user.blocked_until > days:
                 raise UserHadPendencys("User is blocked", 400)

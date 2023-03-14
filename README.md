@@ -21,6 +21,10 @@
  
  https://bibliotekag-30.onrender.com/api/docs/swagger/
 
+  https://bibliotekag-30.onrender.com/api/schema/
+
+  https://bibliotekag-30.onrender.com/api/docs/swagger/
+
  ## **Devs**
 
  > - [Amanda R. Costa](https://www.linkedin.com/in/amanda-fullstack/)
