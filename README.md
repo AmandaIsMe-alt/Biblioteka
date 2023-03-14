@@ -28,5 +28,9 @@
  ### Type the command in the terminal:
 
 ```json
-  pip install -r requirements.txt
+  Criar Ambiente Venv : python -m venv venv
+  Ativar Ambiente Venv : source venv/Scripts/activate -> para Windows // source venv/bin/activate -> para Linux
+  Instalar Pacotes : pip install -r requirements.txt
+  Gerar Migrações : python manage.py migrate
+  Iniciar Servidor : python manage.py runserver
  ```
