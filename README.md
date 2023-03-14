@@ -21,9 +21,6 @@
  
  https://bibliotekag-30.onrender.com/api/docs/swagger/
 
-  https://bibliotekag-30.onrender.com/api/schema/
-
-  https://bibliotekag-30.onrender.com/api/docs/swagger/
 
  ## **Devs**
 
