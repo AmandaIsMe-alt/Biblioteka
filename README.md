@@ -13,9 +13,13 @@
  - Python
  - Django
  
- **Base URL:**
+ **Base URL: https://bibliotekag-30.onrender.com**
 
  **Documentation:**
+
+  https://bibliotekag-30.onrender.com/api/schema/
+
+  https://bibliotekag-30.onrender.com/api/docs/swagger/
 
  ## **Devs**
 
