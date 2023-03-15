@@ -10,7 +10,6 @@ from rest_framework.exceptions import APIException
 from Users.models import User
 import pytz
 from rest_framework.response import Response
-from Users.permissions import IsAdminOrAccountOwner
 from Books.models import Book, Follow
 from django.core.mail import send_mail
 from django.conf import settings
@@ -128,15 +127,11 @@ class BorrowReturn(generics.UpdateAPIView):
                 status=200,
             )
 
-        copy1 = Copy.objects.filter(
-            id=self.kwargs.get("copie_id")
-        ).first()
+        copy1 = Copy.objects.filter(id=self.kwargs.get("copie_id")).first()
         copy1.is_active = True
         copy1.save()
 
-        book = Book.objects.filter(
-            id=copy1.book_id
-        ).first()
+        book = Book.objects.filter(id=copy1.book_id).first()
 
         borrow.returned = True
         borrow.save()
@@ -145,12 +140,10 @@ class BorrowReturn(generics.UpdateAPIView):
 
         follow = Follow.objects.filter(book=copy1.book_id).first()
 
-        if follow: 
-            if verified_copies.count() > 0: 
-                follows = Follow.objects.filter(
-                    book=copy1.book_id
-                ).all()
-                
+        if follow:
+            if verified_copies.count() > 0:
+                follows = Follow.objects.filter(book=copy1.book_id).all()
+
                 emails = [follow.user.email for follow in follows]
 
                 send_mail(
@@ -158,7 +151,7 @@ class BorrowReturn(generics.UpdateAPIView):
                     message="O livro que você segue está disponível na BiblioteKA.",
                     from_email=settings.EMAIL_HOST_USER,
                     recipient_list=emails,
-                    fail_silently=False
-                    )
+                    fail_silently=False,
+                )
 
         return Response({"success": "Book successfully returned"}, status=200)

@@ -28,8 +28,6 @@ class CopySerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         return Copy.objects.create(**validated_data)
 
-    # def get_borrow_amount(self, obj: Copy) -> dict:
-
 
 class BorrowSerializer(serializers.ModelSerializer):
     class Meta:
